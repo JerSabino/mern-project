@@ -16,7 +16,12 @@ const getAllNotes = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: 'No notes found'})
   }
 
-  res.json(notes)
+  const notesWithUser = await Promise.all(notes.map(async (note) => {
+    const user = await User.findById(note.user).lean().exec()
+    return { ...note, username: user.username}
+  }))
+
+  res.json(notesWithUser)
 })
 
 // @desc    Create a new note
@@ -57,14 +62,14 @@ const updateNote = asyncHandler(async (req, res) => {
   const { id, user, title, text, completed } = req.body
 
   //Confirm data
-  if(!id || !user || !title || !text ) {
+  if(!id || !user || !title || !text || typeof completed !== 'boolean') {
     return res.status(400).json({ message: 'Please fill in all fields' })
   }
 
   const note = await Note.findById(id).exec()
 
   //Check duplicate
-  const duplicate = await User.findOne({ title }).lean().exec()
+  const duplicate = await Note.findOne({ title }).lean().exec()
 
   //Allow updates to original note
   if (duplicate && duplicate?._id.toString() !== id) {
@@ -75,6 +80,7 @@ const updateNote = asyncHandler(async (req, res) => {
   note.user = user
   note.title = title
   note.text = text
+  note.completed = completed
 
   const updatedNote = await note.save()
 
