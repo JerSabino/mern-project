@@ -42,7 +42,7 @@ const login = asyncHandler(async (req, res) => {
       "username": foundUser.username 
     },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: '1d'}
+    { expiresIn: '7d'}
   )
 
   res.cookie('jwt', refreshToken, {
