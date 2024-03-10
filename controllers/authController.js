@@ -22,7 +22,7 @@ const login = asyncHandler(async (req, res) => {
   const match = await bcrypt.compare(password, foundUser.password)
 
   if (!match){
-    return res.status(401).json({ message: 'Password is incorrect'})
+    return res.status(402).json({ message: 'Password is incorrect'})
   }
 
   // Create access/refresh tokens and secure cookie
