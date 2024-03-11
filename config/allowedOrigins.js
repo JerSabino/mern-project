@@ -1,5 +1,5 @@
 const allowedOrigins = [
-  'http://localhost:3000'
+  'https://taskit-bd9e.onrender.com'
 ]
 
 module.exports = allowedOrigins
